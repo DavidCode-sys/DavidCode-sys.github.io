@@ -111,6 +111,7 @@ explanation.penup()
 explanation.goto(0, -300)
 explanation.write("The green arrow represents the centripetal force,\n"
                   "always directed towards the center of the circle.\n"
+                  "v (linear) = rad/s * radius\n"
                   "Fc = m * ac  ---> Fc = m * (v²/r)\n"
                   "Press 'm' to change mass, 'r' for radius, 'v' for velocity",
                   align="center", font=("Arial", 12, "normal"))
