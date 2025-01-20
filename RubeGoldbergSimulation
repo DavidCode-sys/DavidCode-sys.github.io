@@ -1,0 +1,115 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+class RubeGoldbergSimulation:
+    def __init__(self):
+        #System Constants
+        self.g = 9.81  # gravitational acceleration (m/s²)
+        self.marble_mass = 0.01  #kg
+        self.track_height = 0.8  #meters
+        self.loop_radius = 0.05  #meters
+        self.friction_coef = 0.2  #rubber pad friction
+        self.domino_mass = 0.03  #kg
+        self.domino_height = 0.05  #meters
+        
+    def blue_track_velocity(self, height):
+        """Calculate marble velocity after blue track"""
+        #v = √(2gh)
+        return np.sqrt(2 * self.g * height)
+    
+    def loop_de_loop(self, initial_velocity):
+        """Calculate loop-de-loop exit velocity"""
+        min_velocity = np.sqrt(self.g * self.loop_radius)
+        if initial_velocity < min_velocity:
+            return 0  #Loop fails
+        
+        #Account for energy loss in loop
+        energy_loss = 0.15  #15% energy loss
+        final_velocity = initial_velocity * np.sqrt(1 - energy_loss)
+        return final_velocity
+    
+    def wooden_beam_motion(self, initial_velocity, angle=30):
+        """Calculate motion on inclined plane"""
+        angle_rad = np.radians(angle)
+        acceleration = self.g * np.sin(angle_rad)
+        distance = 0.2  #meters
+        time = np.sqrt(2 * distance / acceleration)
+        final_velocity = initial_velocity + acceleration * time
+        return final_velocity
+    
+    def simulate_machine(self):
+        velocities = []
+        stages = []
+        
+        #Stage 1: Blue Track
+        v1 = self.blue_track_velocity(self.track_height)
+        velocities.append(v1)
+        stages.append('Blue Track')
+        #Stage 2: Loop-de-Loop
+        v2 = self.loop_de_loop(v1)
+        velocities.append(v2)
+        stages.append('Loop-de-Loop')
+        
+        #Stage 3: Inclined Plane
+        v3 = self.wooden_beam_motion(v2)
+        velocities.append(v3)
+        stages.append('Inclined Plane')
+        
+        return stages, velocities
+
+    def plot_results(self, stages, velocities):
+        plt.figure(figsize=(10, 6))
+        colors = ['blue', 'yellow', 'brown']
+        plt.bar(stages, velocities, color=colors)
+        plt.title('Marble Velocity Through Stages')
+        plt.ylabel('Velocity (m/s)')
+        plt.xlabel('Stages')
+        
+        #Add velocity labels on top of bars
+        for i, v in enumerate(velocities):
+            plt.text(i, v + 0.1, f'{v:.2f} m/s', 
+                    ha='center', va='bottom')
+            
+        plt.tight_layout()
+        plt.show()
+
+#Run sim
+machine = RubeGoldbergSimulation()
+stages, velocities = machine.simulate_machine()
+machine.plot_results(stages, velocities)
+
+
+def plot_domino_momentum():
+    # Parameters
+    domino_count = 8
+    initial_momentum = 0.07  # kg·m/s
+    efficiency = 0.85  #85% energy transfer
+    extra_mass_last_domino = 0.4  #kg
+    #Calculate momentum for each domino
+    momentum = []
+    for i in range(1, domino_count + 1):
+        if i < domino_count:
+            #Regular domino momentum
+            momentum.append(initial_momentum * (efficiency ** (i - 1)))
+        else:
+            #Last domino with extra mass
+            last_domino_momentum = initial_momentum * (efficiency ** (i - 1)) * (1 + extra_mass_last_domino)
+            momentum.append(last_domino_momentum)
+    
+    #Create plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(1, domino_count + 1), momentum, 'ro-')
+    plt.title('Momentum Transfer Through Domino Chain')
+    plt.xlabel('Domino Number')
+    plt.ylabel('Momentum (kg⋅m/s)')
+    plt.grid(True)
+    
+    #Labels
+    for i, m in enumerate(momentum):
+        plt.text(i + 1, m + 0.001, f'{m:.3f}', ha='center', va='bottom')
+    
+    plt.tight_layout()
+    plt.show()
+
+plot_domino_momentum()
+
