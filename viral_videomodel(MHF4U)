@@ -1,0 +1,34 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def viral_videomodel(t):
+    a = 107  #initial views
+    b = 1.5088  #growth factor
+    return a * (b **t)
+
+#Generate time points
+t = np.linspace(0, 48, 100)
+
+#Calculate views
+views = viral_videomodel(t)
+#Plot the results
+plt.figure(figsize=(10, 6))
+plt.plot(t, views)
+plt.title('Viral TikTok Video Growth Model')
+plt.xlabel('Time (hours)')
+plt.ylabel('Number of Views')
+plt.yscale('log')  #I Used a log scale for y axis due to exponential growth
+plt.grid(True)
+
+#Plot actual data points
+actual_data = [(0, 107), (6, 1256), (12, 14143), (18, 175735), (24, 2073432)]
+x_actual, y_actual = zip(*actual_data)
+plt.scatter(x_actual, y_actual, color='red', label='Actual Data')
+plt.legend()
+plt.show()
+
+#Calculate views at specific times
+print(f"Views after 36 hou rs: {viral_videomodel(36):.0f}")
+print(f"Time to reach 1 billion views: {np.log(1e9/107)/np.log(1.5088):.3f} hours")
+print(f"Views after one week: {viral_videomodel(168):.2e}")
+
